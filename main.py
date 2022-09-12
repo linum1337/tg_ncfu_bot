@@ -1,4 +1,5 @@
 import config
+import login_parser
 from db import db
 import keyboard as kb
 import profile
@@ -38,6 +39,10 @@ class RegStages(StatesGroup):
     choosing_mode = State()
 
 
+@dp.message_handler(commands=['captcha'])
+async def captha_test(message: types.Message):
+    photo = open('Captcha.jpeg', 'rb')
+    await bot.send_photo(message.from_user.id, photo)
 @dp.message_handler(commands=['cancel'], state='*')
 async def cancel_command(message: types.Message, state: FSMContext):
     await message.answer('Состояние сброшено до начального')
