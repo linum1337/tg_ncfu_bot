@@ -38,11 +38,24 @@ class RegStages(StatesGroup):
     choosing_teacher = State()
     choosing_mode = State()
 
+class EcampusLogin(StatesGroup):
+    typing_login = State()
+    typing_password = State()
+    typing_captcha = State()
 
-@dp.message_handler(commands=['captcha'])
+
+
+@dp.message_handler(commands=['captcha'], content_types=['text'], state=EcampusLogin.typing_login) #captcha output
 async def captha_test(message: types.Message):
+    await bot.send_message(message.from_user.id, text='Введите логин')
+    await EcampusLogin.typing_login.set()
+    await bot.send_message(message.from_user.id, text='Введите пароль')
+    await EcampusLogin.typing_login.set()
+    await bot.send_message(message.from_user.id, text='Введите капчу')
     photo = open('Captcha.jpeg', 'rb')
     await bot.send_photo(message.from_user.id, photo)
+    await EcampusLogin.typing_login.set()
+
 @dp.message_handler(commands=['cancel'], state='*')
 async def cancel_command(message: types.Message, state: FSMContext):
     await message.answer('Состояние сброшено до начального')

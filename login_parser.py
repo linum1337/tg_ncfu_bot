@@ -1,6 +1,8 @@
 import requests
 import certifi
 import config
+import pytesseract
+from PIL import Image, ImageFilter, ImageEnhance
 
 from bs4 import BeautifulSoup
 import urllib3
@@ -16,3 +18,12 @@ print(img_url)
 img_data = requests.get(img_url).content
 with open('Captcha.jpeg', 'wb') as handler:
     handler.write(img_data)
+
+filename = 'Captcha.jpeg'
+with Image.open(filename) as img:
+    img.load()
+
+img_new = img.convert('L').filter(ImageFilter.SHARPEN)
+
+string = pytesseract.image_to_string(img_new)
+print(string)
