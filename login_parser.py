@@ -31,6 +31,6 @@ gray = cv2.medianBlur(gray, 3)
 filename = "{}.png".format("temp")
 cv2.imwrite(filename, gray)
 
-text = pytesseract.image_to_string(Image.open('temp.png'), config='--psm 6 -c tessedit_char_whitelist=0123456789+-= ')#.split('\n')
+text = pytesseract.image_to_string(Image.open('temp.png'), config='--psm 6 -c tessedit_char_whitelist=012345689+-= ')#.split('\n')
 print(text)
 
