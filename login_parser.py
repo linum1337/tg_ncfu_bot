@@ -2,7 +2,9 @@ import requests
 import certifi
 import config
 import pytesseract
+import cv2
 from PIL import Image, ImageFilter, ImageEnhance
+from PIL import ImageDraw, ImageOps
 
 from bs4 import BeautifulSoup
 import urllib3
@@ -20,10 +22,15 @@ with open('Captcha.jpeg', 'wb') as handler:
     handler.write(img_data)
 
 filename = 'Captcha.jpeg'
-with Image.open(filename) as img:
-    img.load()
+image = cv2.imread(filename)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+gray = cv2.medianBlur(gray, 3)
+#enchancer1 = ImageEnhance.Sharpness(gray)
+#gray = enchancer1.enhance(0.01)
+filename = "{}.png".format("temp")
+cv2.imwrite(filename, gray)
 
-img_new = img.convert('L').filter(ImageFilter.SHARPEN)
+text = pytesseract.image_to_string(Image.open('temp.png'), config='--psm 6 -c tessedit_char_whitelist=0123456789+-= ')#.split('\n')
+print(text)
 
-string = pytesseract.image_to_string(img_new)
-print(string)
